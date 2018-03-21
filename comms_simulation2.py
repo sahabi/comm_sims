@@ -15,12 +15,9 @@ class Location():
         self.lat = lat
         self.lon = lon
 
-LOCATIONS = [0 for i in range(5)]
+LOCATIONS = [0 for i in range(2)]
 LOCATIONS[0] = Location(45.2871,-121.0122) # bottom left
 LOCATIONS[1] = Location(45.2871,-120.9122) # bottom right
-LOCATIONS[4] = Location(45.3289,-120.9635) # middle
-LOCATIONS[2] = Location(45.3729,-121.0122) # top left
-LOCATIONS[3] = Location(45.3729,-120.9122) # top rightclass Location():
 
 AVERROR = 'Error: AirVehicleState for ID ' 
 
@@ -28,10 +25,8 @@ def fire_outputs(cmds, states):
     goto(1,cmds[0])
     sleep(.1)
     goto(2,cmds[1])
-    enemy_loc = choice([4,5,4,4,4,4])
     sleep(.1)
-    goto(3,enemy_loc)
-    return enemy_loc
+    return 1
 
 def goto(uav, loc):
     factory = LMCPFactory.LMCPFactory()
@@ -131,7 +126,6 @@ def update_av_states(av_states, msg_obj, lmcp_factory, socket_sub):
             else:
                 print(AVERROR + str(msg_obj.get_ID()) + ' seen twice in one cycle.')
         msg_obj = get_next_message(socket_sub, lmcp_factory)
-        print av_states[msg_obj.get_ID()].EnergyAvailable()
     return (msg_obj, av_states)
 
 def main():
@@ -139,34 +133,39 @@ def main():
     ctrl0 = Controller_0()
     ctrl1 = Controller_1()
     print("Initiated: Reactive Controllers")
-    splist = [(False,i) for i in range(5)]
     lmcp_factory = LMCPFactory.LMCPFactory()
     av_configurations = dict()
     av_states = dict()
-    av_ids = set([1, 2, 3])
+    av_ids = set([1, 2])
     msg_obj = initialize_av_configurations(av_configurations, av_ids, 
             lmcp_factory, socket_sub)
     time.sleep(1.0)
     msg_obj = initialize_av_states(av_configurations, av_states, msg_obj, 
             lmcp_factory, socket_sub)
     avlocs = [0 for i in range(len(av_ids))]
+    inp_1 = choice([0])
+    prev_0 = 9
+    prev_1 = 9
     while True:
         avlocs = update_avlocs(av_states, avlocs)
         comms_1 = ctrl0.comms(1)
         comms_0 = ctrl1.comms(0)
-        inp_0 = 1 if avlocs[0] == 4 else 0 
+        inp_0 = 0  
         output_0 = ctrl0.move(inp_0,comms_0)+1
-        output_1 = ctrl1.move(None,comms_1)+1
-        output_e = fire_outputs([output_0,output_1], av_states)
+        output_1 = ctrl1.move(inp_1,comms_1)+1
+        inp_1 = choice([0,1])
+        if prev_0 != output_0 or prev_1 != output_1:
+            fire_outputs([output_0,output_1], av_states)
+        prev_0 = output_0
+        prev_1 = output_1
         cc = 0
-        while ( output_e != avlocs[2] or
+        while ( 
                 output_0 != avlocs[0] or
                 output_1 != avlocs[1]):
             if cc % 10 == 0:
-                print(output_e, avlocs[2], output_0, avlocs[0], output_1, avlocs[1])
+                print(output_0, avlocs[0], output_1, avlocs[1])
             cc += 1
             avlocs = update_avlocs(av_states, avlocs)
-            #input_states = update_inputs(avlocs)
             (msg_obj, av_states) = update_av_states(av_states, msg_obj, lmcp_factory, socket_sub)
 
 if __name__ == '__main__':

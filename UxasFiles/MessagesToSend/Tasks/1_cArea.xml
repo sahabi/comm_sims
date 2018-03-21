@@ -1,26 +1,18 @@
 <AreaSearchTask Series="CMASI">
-    <TaskID>5</TaskID>
-    <Label>AS50</Label>
-    <EligibleEntities>
-        <int64>1</int64>
-        <int64>2</int64>
-        <int64>3</int64>
-        <int64>4</int64>
-    </EligibleEntities>
+    <TaskID>1</TaskID>
+    <Label>AS10</Label>
       <SearchArea>
-        <Rectangle Series="CMASI">
+        <Circle Series="CMASI">
           <CenterPoint>
             <Location3D Series="CMASI">
-              <Latitude>45.3289</Latitude>
-              <Longitude>-120.8411</Longitude>
+              <Latitude>45.287</Latitude>
+              <Longitude>-121.0122</Longitude>
               <Altitude>0.0</Altitude>
               <AltitudeType>MSL</AltitudeType>
             </Location3D>
           </CenterPoint>
-          <Width>3000.0</Width>
-          <Height>3000.0</Height>
-          <Rotation>0.0</Rotation>
-        </Rectangle>
+          <Radius>1500.0</Radius>
+        </Circle>
       </SearchArea>
     <ViewAngleList>
         <Wedge Series="CMASI">

@@ -122,7 +122,7 @@ def split_(lst):
 
 env = Environment(loader=FileSystemLoader("./"))
 tpl =  env.get_template('template.py')
-f = "sample_uav_plan.txt"
+f = "uav_plan_assign.txt"
 content = map(split_,open(f).readlines())
 
 c_content = map(lambda x: x[1:], list(filter(lambda x: x[0] == 'c',content)))
